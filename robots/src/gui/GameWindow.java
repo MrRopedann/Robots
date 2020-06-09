@@ -37,10 +37,10 @@ public class GameWindow extends JInternalFrame
     }
 
     Point getRobotPosition(){
-        return new Point(m_visualizer.robot.m_robotPositionX,m_visualizer.robot.m_robotPositionY);
+        return new Point((int)m_visualizer.robot.m_robotPositionX,(int)m_visualizer.robot.m_robotPositionY);
     }
 
-    int getDirection(){
+    double getDirection(){
         return m_visualizer.robot.m_robotDirection;
     }
 
