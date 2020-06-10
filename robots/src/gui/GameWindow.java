@@ -1,9 +1,13 @@
 package gui;
 
-import java.awt.*;
+import log.Logger;
 
-import javax.swing.JInternalFrame;
-import javax.swing.JPanel;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+
+import javax.swing.*;
 
 public class GameWindow extends JInternalFrame
 {
@@ -14,41 +18,77 @@ public class GameWindow extends JInternalFrame
         m_visualizer = new GameVisualizer();
         JPanel panel = new JPanel(new BorderLayout());
         panel.add(m_visualizer, BorderLayout.CENTER);
+        setJMenuBar(generateMenuBar());
         getContentPane().add(panel);
         pack();
     }
+    private JMenuBar generateMenuBar()
+    {
+        JMenuBar menuBar = new JMenuBar();
+        menuBar.add(generateRobot());
+        return menuBar;
+    }
 
-    void addObs(RobotCoordWindow window){//добавление наблюдателей
+    private JMenu generateRobot() {
+        JMenu otherMenu = new JMenu("Создать робота");
+        ActionListener act = (event) -> {
+            m_visualizer.addRobot();
+            Logger.debug("Создан новый робот");
+        };
+        addSubMenu(otherMenu, "новый робот", act, KeyEvent.VK_A);
+        return otherMenu;
+    }
+
+    private void addSubMenu(JMenu bar, String name, ActionListener listener, int keyEvent){
+        JMenuItem subMenu = new JMenuItem(name, keyEvent);
+        subMenu.addActionListener(listener);
+        bar.add(subMenu);
+    }
+
+    void addObstacle(Obstacle o){
+        m_visualizer.robot.obstacles.add(o);
+    }
+
+    ArrayList<Obstacle> getObstacles(){
+        return m_visualizer.robot.obstacles;
+    }
+
+    void addObs(RobotCoordWindow window){
         m_visualizer.robot.observable.add(window);
     }
 
-    JInternalFrame getObserver(){//получить объект наблюдателя
+    JInternalFrame getObserver(){
         return  (JInternalFrame) m_visualizer.robot.observable.get(0);
     }
 
-    boolean isNoObs(){//проверка на существование наблюдателей
+    boolean isNoObs(){
         return  m_visualizer.robot.observable.isEmpty();
     }
 
-    void removeObs(RobotCoordWindow window){//удаление наблюдателей
+    void removeObs(RobotCoordWindow window){
         m_visualizer.robot.observable.remove(window);
     }
 
-    Point getRobotPosition(){
-        return new Point((int)m_visualizer.robot.m_robotPositionX,(int) m_visualizer.robot.m_robotPositionY);
+    double getRobotX(){
+        return m_visualizer.robot.m_robotPositionX;
+    }
+
+    double getRobotY(){
+        return m_visualizer.robot.m_robotPositionY;
     }
 
     double getDirection(){
         return m_visualizer.robot.m_robotDirection;
     }
 
-    void setDirection(int direction){
+    void setDirection(double direction){
         m_visualizer.robot.m_robotDirection = direction;
     }
 
-    void setRobotPosition(Point p){
-        m_visualizer.robot.setRobotPosition(p);
+    void setRobotPosition(Point point){
+        m_visualizer.robot.m_robotPositionX=point.x; m_visualizer.robot.m_robotPositionY=point.y;
     }
+
 
     Point getTargetPosition(){
         return m_visualizer.robot.getTargetPosition();

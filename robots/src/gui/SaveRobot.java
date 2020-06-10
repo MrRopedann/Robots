@@ -17,7 +17,7 @@ public class SaveRobot implements Serializable {
     }
 
     public SaveRobot(GameWindow gameWindow){
-        this.position = gameWindow.getRobotPosition();
+        this.position = gameWindow.getTargetPosition();
         this.aim = gameWindow.getTargetPosition();
         this.orientation = (int)gameWindow.getDirection();
     }

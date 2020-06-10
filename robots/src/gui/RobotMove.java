@@ -1,15 +1,14 @@
 package gui;
 
-import log.Logger;
-
 import java.awt.*;
-import java.awt.geom.Point2D;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Observer;
-import java.util.Stack;
+
 
 public class RobotMove extends java.util.Observable {
-
+    ArrayList<Obstacle> obstacles = new ArrayList<>();
     ArrayList<Observer> observable = new ArrayList<>();
     protected volatile double m_robotPositionX;
     protected volatile double m_robotPositionY;
@@ -18,12 +17,17 @@ public class RobotMove extends java.util.Observable {
     protected volatile int m_targetPositionX;
     protected volatile int m_targetPositionY;
 
-    volatile Point start;
-    volatile Point finish;
-
     private static final double maxVelocity = 0.1;
-    private static final double maxAngularVelocity = 0.001;
 
+    Class cls= AlgDijkstra.class;
+    Method method;
+    {
+        try {
+            method = cls.getMethod("alg",Point.class,Point.class, HashMap.class);
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
+    }
 
     public RobotMove(){
         m_robotPositionX=100;
@@ -43,6 +47,7 @@ public class RobotMove extends java.util.Observable {
         return new Point(m_targetPositionX,m_targetPositionY);
     }
 
+
     private static double distance(double x1, double y1, double x2, double y2)
     {
         double diffX = x1 - x2;
@@ -50,24 +55,20 @@ public class RobotMove extends java.util.Observable {
         return Math.sqrt(diffX * diffX + diffY * diffY);
     }
 
-    protected void setRobotPosition(Point p){
-        m_robotPositionX = p.x;
-        m_robotPositionY = p.y;
-    }
-
     private static double angleTo(double fromX, double fromY, double toX, double toY)
     {
         double diffX = toX - fromX;
         double diffY = toY - fromY;
+
         return asNormalizedRadians(Math.atan2(diffY,diffX));
     }
-
 
     protected void onModelUpdateEvent()
     {
         double distance = distance(m_targetPositionX, m_targetPositionY,
                 m_robotPositionX, m_robotPositionY);
-        if (distance <= 1) {
+        if (distance <= 0.5)
+        {
             return;
         }
         double velocity = maxVelocity;
@@ -77,10 +78,10 @@ public class RobotMove extends java.util.Observable {
         setChanged();
         notifyObservers();
     }
-
-    private void moveRobot(double velocity, double duration)
+    private void moveRobot(double velocity, double duration)//шаг робота
     {
         double newX = m_robotPositionX + velocity * duration * Math.cos(m_robotDirection);
+
         double newY = m_robotPositionY + velocity * duration * Math.sin(m_robotDirection);
         m_robotPositionX = newX;
         m_robotPositionY = newY;
@@ -99,13 +100,10 @@ public class RobotMove extends java.util.Observable {
         return angle;
     }
 
-    private void smth(){
-        Point2D point2D = new Point2D.Double();
-    }
-
     public void notifyObservers(){//обновление данных наблюдателей
         for(Observer o: observable){
             o.update(this,null);
         }
     }
+
 }

@@ -7,7 +7,7 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.util.Timer;
 import java.util.TimerTask;
-import javax.swing.JPanel;
+import javax.swing.*;
 import java.util.ArrayList;
 
 public class GameVisualizer extends JPanel
@@ -15,6 +15,7 @@ public class GameVisualizer extends JPanel
     private final Timer m_timer = initTimer();
 
     private ArrayList<Obstacle> obstacles=new ArrayList<>();
+    ArrayList<RobotMove> robots = new ArrayList<>();
     private int drawnObstacles;
 
     private static Timer initTimer() 
@@ -68,7 +69,6 @@ public class GameVisualizer extends JPanel
         });
             setDoubleBuffered(true);
     }
-
     
     protected void onRedrawEvent()
     {
@@ -78,6 +78,19 @@ public class GameVisualizer extends JPanel
     private static int round(double value)
     {
         return (int)(value + 0.5);
+    }
+
+    void addRobot() {
+        LoadClass lc = new LoadClass("C:\\Users\\skalo\\Desktop\\Java\\Robots-master\\robots\\out\\production\\Robots-master\\algs");
+        String[] choices = new String[lc.classes.size()];
+        choices = lc.classes.keySet().toArray(choices);
+        String in = (String) JOptionPane.showInputDialog(null, "Выберите алгоритм", "Выбор алгоритма", JOptionPane.QUESTION_MESSAGE, null, choices, choices[0]);
+        if (in != null) {
+            RobotMove robotMove = new RobotMove();
+            robotMove.cls = lc.classes.get(in);
+            robots.add(robotMove);
+            robotMove.obstacles = robot.obstacles;
+        }
     }
     
     @Override
