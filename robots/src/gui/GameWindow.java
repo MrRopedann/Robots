@@ -1,8 +1,6 @@
 package gui;
 
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
@@ -37,7 +35,7 @@ public class GameWindow extends JInternalFrame
     }
 
     Point getRobotPosition(){
-        return new Point((int)m_visualizer.robot.m_robotPositionX,(int)m_visualizer.robot.m_robotPositionY);
+        return new Point((int)m_visualizer.robot.m_robotPositionX,(int) m_visualizer.robot.m_robotPositionY);
     }
 
     double getDirection(){

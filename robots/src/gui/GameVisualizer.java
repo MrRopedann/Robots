@@ -1,20 +1,22 @@
 package gui;
 
+import log.Logger;
+
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.Timer;
-import java.util.TimerTask;
 import javax.swing.JPanel;
-import javax.swing.JPanel;
+import java.util.ArrayList;
 
 public class GameVisualizer extends JPanel
 {
     private final Timer m_timer = initTimer();
-    
+
+    private ArrayList<Obstacle> obstacles=new ArrayList<>();
+    private int drawnObstacles;
+
     private static Timer initTimer() 
     {
         Timer timer = new Timer("events generator", true);
@@ -39,6 +41,7 @@ public class GameVisualizer extends JPanel
                 robot.onModelUpdateEvent();
             }
         }, 0, 10);
+
         addMouseListener(new MouseAdapter()
         {
             @Override
@@ -46,7 +49,20 @@ public class GameVisualizer extends JPanel
             {
                 if (e.getButton()==MouseEvent.BUTTON1) {
                     robot.setTargetPosition(e.getPoint());
+                    Logger.debug("Робот начал движение в точку: " + "(" + e.getX() + ";" + e.getY() + ")");
                     repaint();
+                }
+                if(e.getButton()==MouseEvent.BUTTON3){
+                    obstacles.add(new Obstacle(e.getPoint()));
+                    Logger.debug("Создано препятсвие в координатах: " + "(" + e.getX() + ";" + e.getY() + ")");
+                }
+                if (e.getButton()==MouseEvent.BUTTON2){
+                    for (Obstacle o:obstacles){
+                        if (o.hasInBorder(e.getPoint())){
+                            obstacles.remove(o);
+                            Logger.debug("Удаленно препятсвие в координатах: " + "(" + e.getX() + ";" + e.getY() + ")");
+                        }
+                    }
                 }
             }
         });
@@ -71,6 +87,9 @@ public class GameVisualizer extends JPanel
         Graphics2D g2d = (Graphics2D)g;
         drawRobot(g2d, round(robot.m_robotPositionX), round(robot.m_robotPositionY), robot.m_robotDirection);
         drawTarget(g2d, robot.m_targetPositionX, robot.m_targetPositionY);
+        for(int i=0; i<obstacles.size(); i++){
+            obstacles.get(i).paint(g2d);
+        }
     }
     
     private static void fillOval(Graphics g, int centerX, int centerY, int diam1, int diam2)
