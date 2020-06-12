@@ -19,16 +19,6 @@ public class RobotMove extends java.util.Observable {
 
     private static final double maxVelocity = 0.1;
 
-    Class cls= AlgDijkstra.class;
-    Method method;
-    {
-        try {
-            method = cls.getMethod("alg",Point.class,Point.class, HashMap.class);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        }
-    }
-
     public RobotMove(){
         m_robotPositionX=100;
         m_robotPositionY=100;

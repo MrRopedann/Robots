@@ -8,6 +8,7 @@ import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
 import javax.swing.*;
+import javax.swing.border.Border;
 
 public class GameWindow extends JInternalFrame
 {
@@ -30,9 +31,10 @@ public class GameWindow extends JInternalFrame
     }
 
     private JMenu generateRobot() {
+
         JMenu otherMenu = new JMenu("Создать робота");
         ActionListener act = (event) -> {
-            m_visualizer.addRobot();
+            m_visualizer.robots.add(new RobotDraw());
             Logger.debug("Создан новый робот");
         };
         addSubMenu(otherMenu, "новый робот", act, KeyEvent.VK_A);
@@ -89,17 +91,8 @@ public class GameWindow extends JInternalFrame
         m_visualizer.robot.m_robotPositionX=point.x; m_visualizer.robot.m_robotPositionY=point.y;
     }
 
-
     Point getTargetPosition(){
         return m_visualizer.robot.getTargetPosition();
-    }
-
-    int getTargetX() {
-        return m_visualizer.robot.m_targetPositionX;
-    }
-
-    int getTargetY(){
-        return m_visualizer.robot.m_targetPositionY;
     }
 
     void setTargetPosition(Point position){

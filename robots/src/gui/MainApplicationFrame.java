@@ -47,16 +47,16 @@ public class MainApplicationFrame extends JFrame
             ObjectInputStream obst = new ObjectInputStream(new BufferedInputStream(new FileInputStream(OBSTACLE)));
             syncWindows = win.read();
             int windows = win.read();
-            for (int i = 0; i < syncWindows; i++) {//добавление всех свзяных окон
-                GameWindow gameWindow = createGameWindow((SaveWindow) win.readObject());//окно игры
+            for (int i = 0; i < syncWindows; i++) {
+                GameWindow gameWindow = createGameWindow((SaveWindow) win.readObject());
 
-                RobotCoordWindow coordWindow = createCoordWin((SaveWindow) win.readObject());//окно координат
-                gameWindow.addObs(coordWindow);//привязка окна координат к игровому
+                RobotCoordWindow coordWindow = createCoordWin((SaveWindow) win.readObject());
+                gameWindow.addObs(coordWindow);
 
-                setRobotPosition(gameWindow, (SaveRobot) pos.readObject());//восстановление позиций робота
+                setRobotPosition(gameWindow, (SaveRobot) pos.readObject());
                 coordWindow.setText("x: " + gameWindow.getRobotX() + "\r\ny: " + gameWindow.getRobotY());
 
-                countObstacles = obst.read();//восстановление препятствий
+                countObstacles = obst.read();
                 for (int o = 0;o<countObstacles;o++){
                     gameWindow.addObstacle((Obstacle) obst.readObject());
                 }
@@ -64,31 +64,31 @@ public class MainApplicationFrame extends JFrame
                 addWindow(gameWindow);
                 addWindow(coordWindow);
             }
-            for (int i = 0; i < windows; i++) {//добавление оставшихся независимых окон
+            for (int i = 0; i < windows; i++) {
                 SaveWindow window = (SaveWindow) win.readObject();
                 switch (window.name) {
                     case 'l':
-                        addWindow(createLogWindow(window));//создание окна лога
+                        addWindow(createLogWindow(window));
                         break;
                     case 'g':
-                        GameWindow gameWindow = createGameWindow(window);//создание окна игры
+                        GameWindow gameWindow = createGameWindow(window);
 
-                        setRobotPosition(gameWindow, (SaveRobot) pos.readObject());//восстановление позиций робота
+                        setRobotPosition(gameWindow, (SaveRobot) pos.readObject());
 
-                        countObstacles = obst.read();//восстановление препятствий
+                        countObstacles = obst.read();
                         for (int o = 0;o<countObstacles;o++){
                             gameWindow.addObstacle((Obstacle) obst.readObject());
                         }
                         addWindow(gameWindow);
                         break;
                     case 'c':
-                        RobotCoordWindow coordWindow = createCoordWin(window);//создание окна координат
+                        RobotCoordWindow coordWindow = createCoordWin(window);
                         coordWindow.setText("Нет наблюдаемых");
                         addWindow(coordWindow);
                 }
             }
             if (countLogs == 0) addWindow(createLogWindow());
-            if (countGames == 0) {//если нет и игрового и координатного окна то создать сразу два и связать их
+            if (countGames == 0) {
                 if (countCoords == 0) {
                     GameWindow gameWindow = createGameWindow();
                     RobotCoordWindow coordWindow = createCoordWin();
@@ -96,7 +96,7 @@ public class MainApplicationFrame extends JFrame
                     coordWindow.setText("x: " + gameWindow.getRobotX() + "\r\ny: " + gameWindow.getRobotY());
                     addWindow(gameWindow);
                     addWindow(coordWindow);
-                } else addWindow(createGameWindow());//иначе просто добавить игровое независимое
+                } else addWindow(createGameWindow());
             }
             ;
             if (countCoords == 0) addWindow(createCoordWin());
@@ -120,9 +120,9 @@ public class MainApplicationFrame extends JFrame
     }
 
     private void setRobotPosition(GameWindow gameWindow, SaveRobot robot){
-        gameWindow.setRobotPosition(robot.position);//позиция робота
-        gameWindow.setTargetPosition(robot.aim);//позиция цели
-        gameWindow.setDirection(robot.orientation);//ориентация робота
+        gameWindow.setRobotPosition(robot.position);
+        gameWindow.setTargetPosition(robot.aim);
+        gameWindow.setDirection(robot.orientation);
     }
 
     private LogWindow createLogWindow(){
@@ -141,7 +141,6 @@ public class MainApplicationFrame extends JFrame
         GameWindow gameWindow = new GameWindow();
         gameWindow.setLocation(game.point);
         gameWindow.setSize(game.dimension);
-        //gameWindow.setTitle(gameWindow.getTitle()+(String.valueOf(countGames)));
         countGames++;
         setMinimumSize(gameWindow.getSize());
 
@@ -152,7 +151,6 @@ public class MainApplicationFrame extends JFrame
         RobotCoordWindow coordWindow = new RobotCoordWindow();
         coordWindow.setLocation(game.point);
         coordWindow.setSize(game.dimension);
-        //coordWindow.setTitle(coordWindow.getTitle()+(String.valueOf(countCoords)));
         countCoords++;
         setMinimumSize(coordWindow.getSize());
         return coordWindow;
@@ -163,7 +161,6 @@ public class MainApplicationFrame extends JFrame
         LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
         logWindow.setLocation(log.point);
         logWindow.setSize(log.dimension);
-        //logWindow.setTitle(logWindow.getTitle()+(String.valueOf(countLogs)));
         countLogs++;
         setMinimumSize(logWindow.getSize());
 
