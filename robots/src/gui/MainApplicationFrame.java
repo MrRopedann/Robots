@@ -20,6 +20,7 @@ import log.Logger;
 public class MainApplicationFrame extends JFrame
 {
     private final JDesktopPane desktopPane = new JDesktopPane();
+    private GameVisualizer gm = new GameVisualizer();
     private int syncWindows = 0; //количество связных окон
     private int countLogs = 0;
     private int countGames = 0;
@@ -166,6 +167,7 @@ public class MainApplicationFrame extends JFrame
 
         logWindow.pack();
         Logger.debug("Протокол работает");
+        Logger.debug("Количество роботов: " + gm.robots.size());
         return logWindow;
     }
 

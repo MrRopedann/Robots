@@ -8,7 +8,12 @@ import java.awt.geom.AffineTransform;
 
 public class RobotDraw extends JPanel {
 
-    RobotMove robotMove = new RobotMove();
+    private RobotMove robotMove;
+
+    public RobotDraw(RobotMove rm)
+    {
+        this.robotMove = rm;
+    }
 
     public static void fillOval(Graphics g, int centerX, int centerY, int diam1, int diam2)
     {
@@ -39,6 +44,8 @@ public class RobotDraw extends JPanel {
         fillOval(g, robotCenterX  + 10, robotCenterY, 5, 5);
         g.setColor(Color.BLACK);
         drawOval(g, robotCenterX  + 10, robotCenterY, 5, 5);
+        //new RobotDraw(robotMove);
+
     }
 
     public void paint(Graphics2D g2d){
