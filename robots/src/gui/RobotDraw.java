@@ -10,9 +10,9 @@ public class RobotDraw extends JPanel {
 
     private RobotMove robotMove;
 
-    public RobotDraw(RobotMove rm)
+    public RobotDraw()
     {
-        this.robotMove = rm;
+        this.robotMove = new RobotMove();
     }
 
     public static void fillOval(Graphics g, int centerX, int centerY, int diam1, int diam2)

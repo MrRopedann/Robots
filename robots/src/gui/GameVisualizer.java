@@ -14,7 +14,7 @@ public class GameVisualizer extends JPanel
     private final Timer m_timer = initTimer();
 
     private ArrayList<Obstacle> obstacles=new ArrayList<>();
-    ArrayList<RobotDraw> robots = new ArrayList<>();
+    ArrayList<Robot> robots = new ArrayList<>();
 
     private int drawnObstacles;
 
@@ -25,10 +25,8 @@ public class GameVisualizer extends JPanel
     }
 
     //RobotDraw currentRobot = robots.get(0);
-
-    RobotMove robotMove = new RobotMove();
     TargetDraw targetDraw = new TargetDraw();
-    RobotDraw robotDraw = new RobotDraw(robotMove);
+    Robot robot = new Robot();
     public GameVisualizer(){
         m_timer.schedule(new TimerTask()
         {
@@ -43,7 +41,7 @@ public class GameVisualizer extends JPanel
             @Override
             public void run()
             {
-                robotMove.onModelUpdateEvent();
+                robot.robotMove.onModelUpdateEvent();
             }
         }, 0, 10);
 
@@ -52,15 +50,15 @@ public class GameVisualizer extends JPanel
             @Override
             public void mouseClicked(MouseEvent e)
             {
-                for (RobotDraw robotDraw : robots) {
-                    if (e.getButton() == MouseEvent.BUTTON2 && ((Math.pow(e.getX() - robotDraw.round(robotMove.m_targetPositionX), 2) / 30 * 30
-                            + Math.pow(e.getY() - robotDraw.round(robotMove.m_targetPositionY), 2)) / 10 * 10) <= 300) {
+                for (Robot robot : robots) {
+                    if (e.getButton() == MouseEvent.BUTTON2 && ((Math.pow(e.getX() - robot.robotDraw.round(robot.robotMove.m_targetPositionX), 2) / 30 * 30
+                            + Math.pow(e.getY() - robot.robotDraw.round(robot.robotMove.m_targetPositionY), 2)) / 10 * 10) <= 300) {
                         //currentRobot = robotDraw;
                         break;
                     }
                 }
                 if (e.getButton()==MouseEvent.BUTTON1) {
-                    robotMove.setTargetPosition(e.getPoint());
+                    robot.robotMove.setTargetPosition(e.getPoint());
                     Logger.debug("Робот начал движение в точку: " + "(" + e.getX() + ";" + e.getY() + ")");
                     repaint();
                 }
@@ -80,6 +78,17 @@ public class GameVisualizer extends JPanel
                  */
             }
         });
+
+        addKeyListener(new KeyAdapter() {
+            public void keyTyped(KeyEvent e, MouseEvent me) {
+                super.keyTyped(e);
+                if (e.getKeyCode() == KeyEvent.VK_PLUS)
+                {
+                    obstacles.add(new Obstacle(me.getPoint()));
+                    Logger.debug("Создано препятсвие в координатах: " + "(" + me.getX() + ";" + me.getY() + ")");
+                }
+            }
+        });
         setDoubleBuffered(true);
     }
 
@@ -93,11 +102,11 @@ public class GameVisualizer extends JPanel
     {
         super.paint(g);
         Graphics2D g2d = (Graphics2D)g;
-        targetDraw.drawTarget(g2d, robotMove.m_targetPositionX, robotMove.m_targetPositionY);
-        robotDraw.paint(g2d);
+        targetDraw.drawTarget(g2d, robot.robotMove.m_targetPositionX, robot.robotMove.m_targetPositionY);
+        robot.robotDraw.paint(g2d);
 
         for (int i = 0; i<robots.size(); i++){
-            robots.get(i).paint(g2d);
+            robots.get(i).robotDraw.paint(g2d);
         }
         for(int i=0; i<obstacles.size(); i++){
             obstacles.get(i).paint(g2d);
