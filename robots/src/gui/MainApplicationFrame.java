@@ -54,7 +54,6 @@ public class MainApplicationFrame extends JFrame
                 RobotCoordWindow coordWindow = createCoordWin((SaveWindow) win.readObject());
                 gameWindow.addObs(coordWindow);
 
-                setRobotPosition(gameWindow, (SaveRobot) pos.readObject());
                 coordWindow.setText("x: " + gameWindow.getRobotX() + "\r\ny: " + gameWindow.getRobotY());
 
                 countObstacles = obst.read();
@@ -73,8 +72,6 @@ public class MainApplicationFrame extends JFrame
                         break;
                     case 'g':
                         GameWindow gameWindow = createGameWindow(window);
-
-                        setRobotPosition(gameWindow, (SaveRobot) pos.readObject());
 
                         countObstacles = obst.read();
                         for (int o = 0;o<countObstacles;o++){
@@ -118,12 +115,6 @@ public class MainApplicationFrame extends JFrame
         setJMenuBar(generateMenuBar());
         setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
         addWindowListener(getClosingAdapter());
-    }
-
-    private void setRobotPosition(GameWindow gameWindow, SaveRobot robot){
-        gameWindow.setRobotPosition(robot.position);
-        gameWindow.setTargetPosition(robot.aim);
-        gameWindow.setDirection(robot.orientation);
     }
 
     private LogWindow createLogWindow(){
@@ -192,7 +183,6 @@ public class MainApplicationFrame extends JFrame
             ObjectOutputStream robotStream =new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(ROBOTPOSITION)));
             ObjectOutputStream obstacleStream = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(OBSTACLE)));
             for (GameWindow g:gameWindows){
-                robotStream.writeObject(new SaveRobot(g));//сохранение роботов
                 robotStream.flush();
 
                 ArrayList<Obstacle> list = g.getObstacles();//сохранение препятствий

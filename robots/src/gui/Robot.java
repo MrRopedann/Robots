@@ -5,7 +5,11 @@ public class Robot {
     public RobotMove robotMove;
 
     public Robot(){
-        this.robotMove = new RobotMove();
-        this.robotDraw = new RobotDraw();
+        robotMove = new RobotMove();
+        robotDraw = new RobotDraw(robotMove);
+    }
+
+    public void someMethod(){
+        this.robotMove.onModelUpdateEvent(this);
     }
 }

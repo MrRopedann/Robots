@@ -53,7 +53,7 @@ public class RobotMove extends java.util.Observable {
         return asNormalizedRadians(Math.atan2(diffY,diffX));
     }
 
-    protected void onModelUpdateEvent()
+    protected void onModelUpdateEvent(Robot robot)
     {
         double distance = distance(m_targetPositionX, m_targetPositionY,
                 m_robotPositionX, m_robotPositionY);
