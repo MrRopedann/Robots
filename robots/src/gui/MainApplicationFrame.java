@@ -1,44 +1,41 @@
 package gui;
 
+import log.Logger;
+
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
-import java.util.*;
-
-import javax.swing.*;
-import log.Logger;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Что требуется сделать:
  * 1. Метод создания меню перегружен функционалом и трудно читается.
  * Следует разделить его на серию более простых методов (или вообще выделить отдельный класс).
- *
  */
-public class MainApplicationFrame extends JFrame
-{
+public class MainApplicationFrame extends JFrame {
     private final JDesktopPane desktopPane = new JDesktopPane();
+    private final String WINDOWDATA = "window";
+    private final String ROBOTPOSITION = "Robot_Position";
+    private final String OBSTACLE = "Obstacles";
     private GameVisualizer gm = new GameVisualizer();
     private int syncWindows = 0; //количество связных окон
     private int countLogs = 0;
     private int countGames = 0;
     private int countCoords = 0;
-    private int countObstacles=0;
 
-    private final String WINDOWDATA = "window";
-    private final String ROBOTPOSITION="Robot_Position";
-    private final String OBSTACLE = "Obstacles";
-
-    public MainApplicationFrame()throws IOException {
+    public MainApplicationFrame() {
         //Make the big window be indented 50 pixels from each edge
         //of the screen.
         int inset = 50;
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         setBounds(inset, inset,
-                screenSize.width  - inset*2,
-                screenSize.height - inset*2);
+                screenSize.width - inset * 2,
+                screenSize.height - inset * 2);
 
         setContentPane(desktopPane);
 
@@ -48,6 +45,7 @@ public class MainApplicationFrame extends JFrame
             ObjectInputStream obst = new ObjectInputStream(new BufferedInputStream(new FileInputStream(OBSTACLE)));
             syncWindows = win.read();
             int windows = win.read();
+            int countObstacles;
             for (int i = 0; i < syncWindows; i++) {
                 GameWindow gameWindow = createGameWindow((SaveWindow) win.readObject());
 
@@ -57,7 +55,7 @@ public class MainApplicationFrame extends JFrame
                 coordWindow.setText("x: " + gameWindow.getRobotX() + "\r\ny: " + gameWindow.getRobotY());
 
                 countObstacles = obst.read();
-                for (int o = 0;o<countObstacles;o++){
+                for (int o = 0; o < countObstacles; o++) {
                     gameWindow.addObstacle((Obstacle) obst.readObject());
                 }
 
@@ -74,7 +72,7 @@ public class MainApplicationFrame extends JFrame
                         GameWindow gameWindow = createGameWindow(window);
 
                         countObstacles = obst.read();
-                        for (int o = 0;o<countObstacles;o++){
+                        for (int o = 0; o < countObstacles; o++) {
                             gameWindow.addObstacle((Obstacle) obst.readObject());
                         }
                         addWindow(gameWindow);
@@ -85,7 +83,9 @@ public class MainApplicationFrame extends JFrame
                         addWindow(coordWindow);
                 }
             }
-            if (countLogs == 0) addWindow(createLogWindow());
+            if (countLogs == 0) {
+                addWindow(createLogWindow());
+            }
             if (countGames == 0) {
                 if (countCoords == 0) {
                     GameWindow gameWindow = createGameWindow();
@@ -94,18 +94,21 @@ public class MainApplicationFrame extends JFrame
                     coordWindow.setText("x: " + gameWindow.getRobotX() + "\r\ny: " + gameWindow.getRobotY());
                     addWindow(gameWindow);
                     addWindow(coordWindow);
-                } else addWindow(createGameWindow());
+                }
+                else {
+                    addWindow(createGameWindow());
+                }
             }
-            ;
-            if (countCoords == 0) addWindow(createCoordWin());
+            if (countCoords == 0) {
+                addWindow(createCoordWin());
+            }
             pos.close();
             win.close();
-        }
-        catch (IOException e){
+        } catch (IOException e) {
             addWindow(createLogWindow());
             GameWindow window = createGameWindow();
             addWindow(window);
-            RobotCoordWindow coordWindow=createCoordWin();
+            RobotCoordWindow coordWindow = createCoordWin();
             addWindow(coordWindow);
             window.addObs(coordWindow);
         } catch (ClassNotFoundException e) {
@@ -117,19 +120,19 @@ public class MainApplicationFrame extends JFrame
         addWindowListener(getClosingAdapter());
     }
 
-    private LogWindow createLogWindow(){
-        return createLogWindow(new SaveWindow('l',10,10,300,300));
+    private LogWindow createLogWindow() {
+        return createLogWindow(new SaveWindow('l', 10, 10, 300, 300));
     }
 
-    private GameWindow createGameWindow(){
-        return createGameWindow(new SaveWindow('g',100,100,300,300));
+    private GameWindow createGameWindow() {
+        return createGameWindow(new SaveWindow('g', 100, 100, 300, 300));
     }
 
-    private RobotCoordWindow createCoordWin(){
-        return createCoordWin(new SaveWindow('c',400,100,300,300));
+    private RobotCoordWindow createCoordWin() {
+        return createCoordWin(new SaveWindow('c', 400, 100, 300, 300));
     }
 
-    private GameWindow createGameWindow(SaveWindow game){
+    private GameWindow createGameWindow(SaveWindow game) {
         GameWindow gameWindow = new GameWindow();
         gameWindow.setLocation(game.point);
         gameWindow.setSize(game.dimension);
@@ -139,7 +142,7 @@ public class MainApplicationFrame extends JFrame
         return gameWindow;
     }
 
-    private RobotCoordWindow createCoordWin(SaveWindow game){
+    private RobotCoordWindow createCoordWin(SaveWindow game) {
         RobotCoordWindow coordWindow = new RobotCoordWindow();
         coordWindow.setLocation(game.point);
         coordWindow.setSize(game.dimension);
@@ -148,8 +151,7 @@ public class MainApplicationFrame extends JFrame
         return coordWindow;
     }
 
-    private LogWindow createLogWindow(SaveWindow log)
-    {
+    private LogWindow createLogWindow(SaveWindow log) {
         LogWindow logWindow = new LogWindow(Logger.getDefaultLogSource());
         logWindow.setLocation(log.point);
         logWindow.setSize(log.dimension);
@@ -158,18 +160,17 @@ public class MainApplicationFrame extends JFrame
 
         logWindow.pack();
         Logger.debug("Протокол работает");
-        Logger.debug("Количество роботов: " + gm.robots.size());
+        Logger.debug("Количество роботов: " + gm.getRobots().size());
         return logWindow;
     }
 
-    private WindowAdapter getClosingAdapter(){
-        return  new WindowAdapter() {
+    private WindowAdapter getClosingAdapter() {
+        return new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                String ObjButtons[] = {"Да","Нет"};
-                int PromptResult = JOptionPane.showOptionDialog(null,"Вы уверены, что хотите выйти?","Выход",JOptionPane.DEFAULT_OPTION,JOptionPane.WARNING_MESSAGE,null,ObjButtons,ObjButtons[1]);
-                if(PromptResult== JOptionPane.YES_OPTION)
-                {
+                String[] ObjButtons = {"Да", "Нет"};
+                int PromptResult = JOptionPane.showOptionDialog(null, "Вы уверены, что хотите выйти?", "Выход", JOptionPane.DEFAULT_OPTION, JOptionPane.WARNING_MESSAGE, null, ObjButtons, ObjButtons[1]);
+                if (PromptResult == JOptionPane.YES_OPTION) {
                     writeWindows(readWindows());
                     System.exit(0);
                 }
@@ -178,16 +179,16 @@ public class MainApplicationFrame extends JFrame
     }
 
 
-    private void saveRobotPositionAndObstacles(ArrayList<GameWindow> gameWindows){//сохранение позиции робота
-        try{
-            ObjectOutputStream robotStream =new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(ROBOTPOSITION)));
+    private void saveRobotPositionAndObstacles(ArrayList<GameWindow> gameWindows) {//сохранение позиции робота
+        try {
+            ObjectOutputStream robotStream = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(ROBOTPOSITION)));
             ObjectOutputStream obstacleStream = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(OBSTACLE)));
-            for (GameWindow g:gameWindows){
+            for (GameWindow g : gameWindows) {
                 robotStream.flush();
 
                 ArrayList<Obstacle> list = g.getObstacles();//сохранение препятствий
                 obstacleStream.write(list.size());
-                for (Obstacle o:list){
+                for (Obstacle o : list) {
                     obstacleStream.writeObject(o);
                 }
                 obstacleStream.flush();
@@ -199,26 +200,26 @@ public class MainApplicationFrame extends JFrame
     }
 
 
-
     private ArrayList<SaveWindow> readWindows() {//считывание окошек
-        syncWindows =0;
-        countGames=0;
+        syncWindows = 0;
+        countGames = 0;
         ArrayList<SaveWindow> windows = new ArrayList<>();
-        ArrayList<LogWindow> logWindows=new ArrayList<>();
-        ArrayList<GameWindow> gameWindows=new ArrayList<>();
+        ArrayList<LogWindow> logWindows = new ArrayList<>();
+        ArrayList<GameWindow> gameWindows = new ArrayList<>();
         ArrayList<RobotCoordWindow> coordWindows = new ArrayList<>();
-        for (Component comp: desktopPane.getAllFrames())
-            if (comp instanceof RobotCoordWindow)
+        for (Component comp : desktopPane.getAllFrames())
+            if (comp instanceof RobotCoordWindow) {
                 coordWindows.add((RobotCoordWindow) comp);
-        for (int i = 0; i< desktopPane.getComponents().length;i++){
+            }
+        for (int i = 0; i < desktopPane.getComponents().length; i++) {
             Component c = desktopPane.getComponents()[i];
             String s = c.getAccessibleContext().getAccessibleName();
 
-            switch (s.replaceAll("\\d","")) {
+            switch (s.replaceAll("\\d", "")) {
                 case "Игровое поле":
 
-                    if ( !(((GameWindow)c).isNoObs()||((GameWindow)c).getObserver().isClosed())) {//если есть наблюдатели и не закрыты
-                        RobotCoordWindow coordWindow =(RobotCoordWindow) ((GameWindow) c).getObserver();
+                    if (!(((GameWindow) c).isNoObs() || ((GameWindow) c).getObserver().isClosed())) {//если есть наблюдатели и не закрыты
+                        RobotCoordWindow coordWindow = (RobotCoordWindow) ((GameWindow) c).getObserver();
                         if (Arrays.asList(desktopPane.getComponents()).contains(coordWindow)) {
                             windows.add(new SaveWindow('g', c.getLocation(), c.getSize()));
                             windows.add(new SaveWindow('c', ((GameWindow) c).getObserver().getLocation(), ((GameWindow) c).getObserver().getSize()));
@@ -226,7 +227,7 @@ public class MainApplicationFrame extends JFrame
                             syncWindows++;
                         }
                     }
-                    gameWindows.add((GameWindow)c);
+                    gameWindows.add((GameWindow) c);
                     countGames++;
                     break;
                 case "Протокол работы":
@@ -234,31 +235,32 @@ public class MainApplicationFrame extends JFrame
                     break;
             }
         }
-        for (LogWindow l:logWindows) {
-            SaveWindow logWindow = new SaveWindow('l',l.getLocation(), l.getSize());
+        for (LogWindow l : logWindows) {
+            SaveWindow logWindow = new SaveWindow('l', l.getLocation(), l.getSize());
             windows.add(logWindow);
         }
-        for (int i = syncWindows; i<countGames;++i) {
-            SaveWindow gameWindow = new SaveWindow('g',gameWindows.get(i).getLocation(), gameWindows.get(i).getSize());
+        for (int i = syncWindows; i < countGames; ++i) {
+            SaveWindow gameWindow = new SaveWindow('g', gameWindows.get(i).getLocation(), gameWindows.get(i).getSize());
             windows.add(gameWindow);
-            windows.add(new SaveWindow('r',gameWindow.point,new Dimension()));
+            windows.add(new SaveWindow('r', gameWindow.point, new Dimension()));
         }
-        for (RobotCoordWindow c:coordWindows) {
-            SaveWindow coordWindow = new SaveWindow('c',c.getLocation(), c.getSize());
-            if (!windows.contains(coordWindow))
+        for (RobotCoordWindow c : coordWindows) {
+            SaveWindow coordWindow = new SaveWindow('c', c.getLocation(), c.getSize());
+            if (!windows.contains(coordWindow)) {
                 windows.add(coordWindow);
+            }
         }
         saveRobotPositionAndObstacles(gameWindows);
         return windows;
     }
 
-    private void writeWindows(ArrayList<SaveWindow> windows){//запись данных в файл
+    private void writeWindows(ArrayList<SaveWindow> windows) {//запись данных в файл
         try {
             ObjectOutputStream os = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(WINDOWDATA)));
             os.write(syncWindows);
-            os.write(windows.size()-syncWindows*2);
-            for (SaveWindow e:windows){
-                os.writeObject(new SaveWindow(e.name,e));
+            os.write(windows.size() - syncWindows * 2);
+            for (SaveWindow e : windows) {
+                os.writeObject(new SaveWindow(e.name, e));
                 os.flush();
             }
             os.close();
@@ -268,13 +270,12 @@ public class MainApplicationFrame extends JFrame
     }
 
 
-    protected void addWindow(JInternalFrame frame)
-    {
+    private void addWindow(JInternalFrame frame) {
         desktopPane.add(frame);
         frame.setVisible(true);
     }
 
-    private void addSubMenu(JMenu bar, String name, ActionListener listener, int keyEvent){
+    private void addSubMenu(JMenu bar, String name, ActionListener listener, int keyEvent) {
         JMenuItem subMenu = new JMenuItem(name, keyEvent);
         subMenu.addActionListener(listener);
         bar.add(subMenu);
@@ -301,16 +302,14 @@ public class MainApplicationFrame extends JFrame
         return lookAndFeelMenu;
     }
 
-    private JMenu generateTest(){
+    private JMenu generateTest() {
         JMenu testMenu = new JMenu("Тесты");
         testMenu.setMnemonic(KeyEvent.VK_T);
         testMenu.getAccessibleContext().setAccessibleDescription(
                 "Тестовые команды");
 
-        ActionListener act = (event) -> {
-            Logger.debug("Новая строка");
-        };
-        addSubMenu(testMenu, "Сообщение в лог",act, KeyEvent.VK_S);
+        ActionListener act = (event) -> Logger.debug("Новая строка");
+        addSubMenu(testMenu, "Сообщение в лог", act, KeyEvent.VK_S);
         testMenu.setMnemonic(KeyEvent.VK_O);
         testMenu.getAccessibleContext().setAccessibleDescription(
                 "Тестовые команды");
@@ -318,28 +317,14 @@ public class MainApplicationFrame extends JFrame
 
     }
 
-    private JMenu generateOther(){
+    private JMenu generateOther() {
         JMenu otherMenu = new JMenu("Другое");
-        ActionListener act = (event) -> {
-            addWindow(createLogWindow());
-            GameWindow game = createGameWindow();
-            RobotCoordWindow win = createCoordWin();
-            game.addObs(win);
-            win.setText("x: "+game.getRobotX() + "\r\ny: " + game.getRobotY());
-            addWindow(game);
-            addWindow(win);
-        };
-        addSubMenu(otherMenu, "Нужно больше окон!",act, KeyEvent.VK_A);
-
-        act = (event) -> {
-            System.exit(0);
-        };
-        addSubMenu(otherMenu, "Выход",act, KeyEvent.VK_E);
+        ActionListener act = (event) -> System.exit(0);
+        addSubMenu(otherMenu, "Выход", act, KeyEvent.VK_E);
         return otherMenu;
     }
 
-    private JMenuBar generateMenuBar()
-    {
+    private JMenuBar generateMenuBar() {
         JMenuBar menuBar = new JMenuBar();
         JMenu lookAndFeelMenu = generateLookAndFeel();
         JMenu testMenu = generateTest();
@@ -350,16 +335,12 @@ public class MainApplicationFrame extends JFrame
         return menuBar;
     }
 
-    private void setLookAndFeel(String className)
-    {
-        try
-        {
+    private void setLookAndFeel(String className) {
+        try {
             UIManager.setLookAndFeel(className);
             SwingUtilities.updateComponentTreeUI(this);
-        }
-        catch (ClassNotFoundException | InstantiationException
-                | IllegalAccessException | UnsupportedLookAndFeelException e)
-        {
+        } catch (ClassNotFoundException | InstantiationException
+                | IllegalAccessException | UnsupportedLookAndFeelException e) {
             // just ignore
         }
     }
