@@ -54,30 +54,30 @@ public class GameWindow extends JInternalFrame {
     }
 
     void addObstacle(Obstacle o) {
-        m_visualizer.getCurrentRobot().robotMove.obstacles.add(o);
+        m_visualizer.getCurrentRobot().getRobotMove().obstacles.add(o);
     }
 
     ArrayList<Obstacle> getObstacles() {
-        return m_visualizer.getRobots().firstElement().robotMove.obstacles;
+        return m_visualizer.getRobots().firstElement().getRobotMove().obstacles;
     }
 
     void addObs(RobotCoordWindow window) {
-        m_visualizer.getRobots().firstElement().robotMove.observable.add(window);
+        m_visualizer.getRobots().firstElement().getRobotMove().observable.add(window);
     }
 
     JInternalFrame getObserver() {
-        return (JInternalFrame) m_visualizer.getRobots().firstElement().robotMove.observable.get(0);
+        return (JInternalFrame) m_visualizer.getRobots().firstElement().getRobotMove().observable.get(0);
     }
 
     boolean isNoObs() {
-        return m_visualizer.getRobots().firstElement().robotMove.observable.isEmpty();
+        return m_visualizer.getRobots().firstElement().getRobotMove().observable.isEmpty();
     }
 
     double getRobotX() {
-        return m_visualizer.getRobots().firstElement().robotMove.m_robotPositionX;
+        return m_visualizer.getRobots().firstElement().getRobotMove().m_robotPositionX;
     }
 
     double getRobotY() {
-        return m_visualizer.getRobots().firstElement().robotMove.m_robotPositionY;
+        return m_visualizer.getRobots().firstElement().getRobotMove().m_robotPositionY;
     }
 }

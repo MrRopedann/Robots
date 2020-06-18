@@ -42,7 +42,7 @@ public class GameVisualizer extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
-                    currentRobot.robotMove.setTargetPosition(e.getPoint());
+                    currentRobot.getRobotMove().setTargetPosition(e.getPoint());
                     Logger.debug("Робот" + robots.indexOf(currentRobot) + " начал движение в точку: " + "(" + e.getX() + ";" + e.getY() + ")");
                     repaint();
                 }
@@ -85,8 +85,8 @@ public class GameVisualizer extends JPanel {
         super.paint(g);
         Graphics2D g2d = (Graphics2D) g;
         for (int i = 0; i < robots.size(); i++) {
-            robots.get(i).robotDraw.paint(g2d);
-            targetDraw.drawTarget(g2d, robots.get(i).robotMove.m_targetPositionX, robots.get(i).robotMove.m_targetPositionY);
+            robots.get(i).getRobotDraw().paint(g2d);
+            targetDraw.drawTarget(g2d, robots.get(i).getRobotMove().m_targetPositionX, robots.get(i).getRobotMove().m_targetPositionY);
         }
 
         for (Obstacle obstacle : obstacles) {

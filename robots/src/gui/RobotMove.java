@@ -71,7 +71,6 @@ public class RobotMove extends java.util.Observable {
     private void moveRobot(double velocity, double duration)//шаг робота
     {
         double newX = m_robotPositionX + velocity * duration * Math.cos(m_robotDirection);
-
         double newY = m_robotPositionY + velocity * duration * Math.sin(m_robotDirection);
         m_robotPositionX = newX;
         m_robotPositionY = newY;
