@@ -50,6 +50,14 @@ public class GameVisualizer extends JPanel {
                     obstacles.add(new Obstacle(e.getPoint()));
                     Logger.debug("Создано препятсвие в координатах: " + "(" + e.getX() + ";" + e.getY() + ")");
                 }
+                if (e.getButton()==MouseEvent.BUTTON2) {
+                    for (Obstacle o : obstacles) {
+                        if (o.hasInBorder(e.getPoint())) {
+                            obstacles.remove(o);
+                            Logger.debug("Удаленно препятсвие в координатах: " + "(" + e.getX() + ";" + e.getY() + ")");
+                        }
+                    }
+                }
             }
 
         });
