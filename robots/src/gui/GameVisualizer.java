@@ -1,21 +1,23 @@
 package gui;
 
 import log.Logger;
+import logistic.PathFinder;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.ListIterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class GameVisualizer extends JPanel {
-
     private Robot currentRobot;
     private DefaultListModel<Robot> robots;
     private TargetDraw targetDraw = new TargetDraw();
     private ArrayList<Obstacle> obstacles = new ArrayList<>();
+    private PathFinder pathFinder = new PathFinder(obstacles);
 
     public GameVisualizer() {
         robots = new DefaultListModel<>();
@@ -26,13 +28,13 @@ public class GameVisualizer extends JPanel {
             @Override
             public void run() {
                 onRedrawEvent();
-                currentRobot.someMethod();
+                currentRobot.onModelUpdateEvent();
             }
         }, 0, 50);
         m_timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                currentRobot.someMethod();
+                currentRobot.onModelUpdateEvent();
 
             }
         }, 0, 10);
@@ -42,18 +44,20 @@ public class GameVisualizer extends JPanel {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getButton() == MouseEvent.BUTTON1) {
-                    currentRobot.getRobotMove().setTargetPosition(e.getPoint());
                     Logger.debug("Робот" + robots.indexOf(currentRobot) + " начал движение в точку: " + "(" + e.getX() + ";" + e.getY() + ")");
+                    currentRobot.getRobotMove().setTargetPosition(e.getPoint(), pathFinder);
                     repaint();
                 }
                 if (e.getButton() == MouseEvent.BUTTON3) {
                     obstacles.add(new Obstacle(e.getPoint()));
                     Logger.debug("Создано препятсвие в координатах: " + "(" + e.getX() + ";" + e.getY() + ")");
                 }
-                if (e.getButton()==MouseEvent.BUTTON2) {
-                    for (Obstacle o : obstacles) {
-                        if (o.hasInBorder(e.getPoint())) {
-                            obstacles.remove(o);
+
+                if (e.getButton() == MouseEvent.BUTTON2) {
+                    ListIterator<Obstacle> obstacleIterator = obstacles.listIterator();
+                    while (obstacleIterator.hasNext()) {
+                        if (obstacleIterator.next().hasInBorder(e.getPoint())) {
+                            obstacleIterator.remove();
                             Logger.debug("Удаленно препятсвие в координатах: " + "(" + e.getX() + ";" + e.getY() + ")");
                         }
                     }
@@ -68,12 +72,12 @@ public class GameVisualizer extends JPanel {
         return new Timer("events generator", true);
     }
 
-    Robot getCurrentRobot() {
-        return currentRobot;
-    }
-
     void setCurrentRobot(Robot currentRobot) {
         this.currentRobot = currentRobot;
+    }
+
+    public ArrayList<Obstacle> getObstacles() {
+        return obstacles;
     }
 
     private void onRedrawEvent() {

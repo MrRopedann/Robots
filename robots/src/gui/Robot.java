@@ -17,7 +17,7 @@ public class Robot {
         return robotMove;
     }
 
-    public void someMethod(){
-        this.robotMove.onModelUpdateEvent(this);
+    public void onModelUpdateEvent() {
+        this.robotMove.onModelUpdateEvent();
     }
 }

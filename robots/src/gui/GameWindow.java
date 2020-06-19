@@ -54,11 +54,11 @@ public class GameWindow extends JInternalFrame {
     }
 
     void addObstacle(Obstacle o) {
-        m_visualizer.getCurrentRobot().getRobotMove().obstacles.add(o);
+        m_visualizer.getObstacles().add(o);
     }
 
     ArrayList<Obstacle> getObstacles() {
-        return m_visualizer.getRobots().firstElement().getRobotMove().obstacles;
+        return m_visualizer.getObstacles();
     }
 
     void addObs(RobotCoordWindow window) {
